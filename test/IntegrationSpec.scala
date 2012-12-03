@@ -1,26 +1,29 @@
+package test
+
 import org.specs2.mutable._
 
 import play.api.test._
 import play.api.test.Helpers._
 
-class HelloWorldSpec extends Specification {
-	"Application" should {
-		"respond to the index Action" in {
-			val Some(result) = routeAndCall(FakeRequest(GET, "/"))
+/**
+ * add your integration spec here.
+ * An integration test will fire up a whole play application in a real (or headless) browser
+ */
+class IntegrationSpec extends Specification {
+  
+  "Application" should {
+    
+    "work from within a browser" in {
+      running(TestServer(3333), HTMLUNIT) { browser =>
 
-			status(result) must equalTo(SEE_OTHER)
-			redirectLocation(result) must equalTo(Some("/tasks"))
-		}
+        browser.goTo("http://localhost:3333/")
 
-		"respond to the tasks Action" in {
-			running(TestServer(3333)) {
-				val Some(result) = routeAndCall(FakeRequest(GET, "/tasks"))
-
-				status(result) must equalTo(OK)
-				contentType(result) must beSome("text/html")
-				charset(result) must beSome("utf-8")
-				contentAsString(result) must contain("Add a new task")
-			}
-		}
-	}
+        browser.pageSource must contain("Todo list")
+        browser.pageSource must contain("Add a new task")
+       
+      }
+    }
+    
+  }
+  
 }
