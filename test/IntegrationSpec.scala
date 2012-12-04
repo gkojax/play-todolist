@@ -15,15 +15,25 @@ class IntegrationSpec extends Specification {
     
     "work from within a browser" in {
       running(TestServer(3333), HTMLUNIT) { browser =>
-
+       
+        // Top Page
         browser.goTo("http://localhost:3333/")
-
+        browser.url must equalTo("http://localhost:3333/tasks")
         browser.pageSource must contain("Todo list")
         browser.pageSource must contain("Add a new task")
-       
+
+        // create Label NG
+        browser.$("#submit").click()
+        browser.url must equalTo("http://localhost:3333/tasks")
+        browser.pageSource must contain("This field is required")
+
+        // create Label OK
+        browser.$("#label").text("testLabel")
+        browser.$("#submit").click()
+        browser.url must equalTo("http://localhost:3333/tasks")
+        browser.$("dd.error").size must equalTo(0)
       }
     }
-    
   }
-  
 }
+
