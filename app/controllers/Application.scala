@@ -1,10 +1,14 @@
 package controllers
 
-import play.api._
+// import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import models.Task
+
+import models.Tasks
+
+import scala.slick.driver.H2Driver.simple._
+import scala.slick.session.Session
 
 object Application extends Controller {
   
@@ -16,22 +20,22 @@ object Application extends Controller {
     Redirect(routes.Application.tasks)
   }
 
-  def tasks = Action {
-    Ok(views.html.index(Task.all(), taskForm))
-  }
+	def tasks = Action {
+		Ok(views.html.index(Tasks.all(), taskForm))
+	}
   
   def newTask = Action { implicit request =>
     taskForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.index(Task.all(), errors)),
+      errors => BadRequest(views.html.index(Tasks.all, errors)),
       label => {
-        Task.create(label)
+        Tasks.create(label)
         Redirect(routes.Application.tasks)
       }
     )
   }
   
   def deleteTask(id: Long) = Action {
-    Task.delete(id)
+    Tasks.delete(id)
     Redirect(routes.Application.tasks)
   }
   
