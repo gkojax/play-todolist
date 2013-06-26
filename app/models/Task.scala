@@ -4,15 +4,17 @@ import anorm._
 import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
+import scala.language.postfixOps
 
-case class Task(id: Long, label: String)
+case class Task(id: Long, label: String, ymd: Option[org.joda.time.DateTime])
 
 object Task {
   
   val task = {
     get[Long]("id") ~ 
-    get[String]("label") map {
-      case id~label => Task(id, label)
+    get[String]("label") ~
+    get[org.joda.time.DateTime]("ymd") map {
+      case id~label~ymd => Task(id, label, ymd)
     }
   }
 
@@ -20,10 +22,10 @@ object Task {
     SQL("select * from task").as(task *)
   }
   
-  def create(label: String) {
+  def create(task: Task) {
     DB.withConnection { implicit c =>
       SQL("insert into task (label) values ({label})").on(
-        'label -> label
+        'label -> task.label
       ).executeUpdate()
     }
   }

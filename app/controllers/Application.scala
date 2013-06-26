@@ -7,9 +7,13 @@ import play.api.data.Forms._
 import models.Task
 
 object Application extends Controller {
-  
+
   val taskForm = Form(
-    "label" -> nonEmptyText
+    mapping(
+      "id" -> ignored(1L),
+      "label" -> nonEmptyText,
+      "ymd"   -> optional(jodaDate("yyyy/MM/dd"))
+    )(Task.apply)(Task.unapply)
   )
 
   def index = Action {
@@ -23,8 +27,8 @@ object Application extends Controller {
   def newTask = Action { implicit request =>
     taskForm.bindFromRequest.fold(
       errors => BadRequest(views.html.index(Task.all(), errors)),
-      label => {
-        Task.create(label)
+      input => {
+        Task.create(input)
         Redirect(routes.Application.tasks)
       }
     )
