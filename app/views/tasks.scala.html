@@ -1,0 +1,32 @@
+@(tasks: List[Task], taskForm: Form[String])(implicit lang: Lang)
+
+@import helper._
+@import views.helper.bootstrap.BasicField._
+
+@main("list", true) {
+
+    <table class="table table-hover">
+      <caption>@tasks.size task@{if(tasks.size > 1) {"s"}}</caption>
+      <tbody>
+      @tasks.map { task =>
+        <tr>
+          <td>@task.label</td>
+                
+          @form(routes.Tasks.deleteTask(task.id)) {
+          <td><input type="submit"  class="btn" value="Delete"></td>
+          }
+        }
+      </tbody>
+     </table>
+
+    <hr/>
+
+    @form(routes.Tasks.newTask) {
+        
+        @inputText(taskForm("label")) 
+        
+        <button type="submit" class="btn" id="loginbutton">create</button>        
+    }
+    
+}
+

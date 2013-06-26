@@ -1,0 +1,62 @@
+@(loginForm: Form[Option[Account]])(implicit flash: Flash, lang: Lang)
+
+@import helper._
+@import views.helper.bootstrap.BasicField._
+
+@main("login", false) {
+
+  @helper.form(routes.Application.authenticate) {
+
+    @loginForm.globalError.map { error =>
+      <div class="alert alert-error">
+      <button type="button" class="close" data-dismiss="alert">x</button>
+      @error.message
+      </div>
+    }
+
+    @flash.get("success").map { message =>
+      <div class="alert alert-success">
+      <button type="button" class="close" data-dismiss="alert">x</button>
+      @message
+      </div>
+    }
+
+    @inputText(loginForm("email"), '_label -> "E-mail")
+    @inputPassword(loginForm("password"), '_label -> "password")
+<!--
+'_placeholder -> 'Password'
+-->
+
+    <button type="submit" class="btn" id="loginbutton">Login</button>
+
+    <hr>
+
+    <table class="table table-hover">
+      <caption>Account List</caption>
+      <thead>
+        <tr>
+          <td>Email</td>
+          <td>Password</td>
+          <td>Permission</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>alice@@example.com</td>
+          <td>secret</td>
+          <td>Administrator</td>
+        </tr>
+        <tr>
+          <td>bob@@example.com</td>
+          <td>secret</td>
+          <td>NormalUser</td>
+        </tr>
+        <tr>
+          <td>chris@@example.com</td>
+          <td>secret</td>
+          <td>NormalUser</td>
+        </tr>
+      </tbody>
+     </table>
+  }
+}
